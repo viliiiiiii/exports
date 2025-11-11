@@ -116,8 +116,7 @@ usort($tasks, static function (array $a, array $b): int {
     return ((int)($a['id'] ?? 0)) <=> ((int)($b['id'] ?? 0));
 });
 
-$taskCount   = count($tasks);
-$generatedAt = date('Y-m-d H:i');
+$taskCount = count($tasks);
 
 $pdo = $demoMode ? null : get_pdo();
 
@@ -137,6 +136,9 @@ $headerBuilding = summarise_single_value(
 if ($headerBuilding === '—' && $buildingId) {
     $headerBuilding = $demoMode ? 'Building #' . $buildingId : lookup_building_label($pdo, $buildingId) ?? $headerBuilding;
 }
+if ($headerBuilding === '—') {
+    $headerBuilding = $buildingId ? 'Building #' . $buildingId : 'All Buildings';
+}
 
 $headerRoom = summarise_single_value(
     $tasks,
@@ -147,6 +149,9 @@ $headerRoom = summarise_single_value(
 );
 if ($headerRoom === '—' && $roomId) {
     $headerRoom = $demoMode ? lookup_room_label_demo($roomId) : lookup_room_label($pdo, $roomId) ?? $headerRoom;
+}
+if ($headerRoom === '—') {
+    $headerRoom = $roomId ? 'Room #' . $roomId : 'All Rooms';
 }
 
 $taskIds    = array_column($tasks, 'id');
@@ -207,35 +212,71 @@ ob_start();
     color: #0f172a;
     margin: 0;
   }
+  .report-shell {
+    background: linear-gradient(135deg, rgba(226, 232, 240, 0.8), rgba(191, 219, 254, 0.35));
+    border: 0.4mm solid rgba(148, 163, 184, 0.3);
+    border-radius: 4mm;
+    padding: 4mm 5mm;
+    margin-bottom: 4.5mm;
+  }
   .report-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 6mm;
-    margin-bottom: 4mm;
   }
   .report-header .info {
     display: flex;
     flex-direction: column;
-    gap: 1.5mm;
+    gap: 2mm;
+    flex: 1 1 auto;
   }
-  .report-header .info span.label {
-    font-weight: 600;
-    color: #475569;
-    margin-right: 2mm;
-    text-transform: uppercase;
+  .report-header .info .primary-label {
+    font-size: 16pt;
+    font-weight: 800;
+    color: #0f172a;
     letter-spacing: 0.04em;
   }
-  .report-header .counts {
-    font-size: 11pt;
-    font-weight: 700;
+  .report-header .info .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6mm;
+    font-size: 9.4pt;
+    color: #334155;
+  }
+  .report-header .summary {
+    flex: 0 0 auto;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 3mm;
+  }
+  .summary .task-count {
+    font-size: 15pt;
+    font-weight: 800;
     color: #1e293b;
     white-space: nowrap;
   }
-  .meta-line {
-    font-size: 8.5pt;
-    color: #64748b;
-    margin-bottom: 3mm;
+  .summary .top-qr {
+    display: inline-flex;
+    align-items: center;
+    gap: 2.2mm;
+    justify-content: flex-end;
+  }
+  .summary .top-qr img {
+    width: 3cm;
+    height: 3cm;
+    object-fit: contain;
+    border: 0.35mm solid rgba(100, 116, 139, 0.35);
+    border-radius: 2.2mm;
+    background: #ffffff;
+  }
+  .summary .top-qr span {
+    font-size: 7.5pt;
+    color: #0f172a;
+    max-width: 32mm;
+    word-break: break-word;
   }
   table {
     width: 100%;
@@ -243,31 +284,34 @@ ob_start();
     table-layout: fixed;
   }
   thead th {
-    background: #e2e8f0;
-    color: #1e293b;
-    font-size: 9pt;
+    background: #dbeafe;
+    color: #0f172a;
+    font-size: 8.6pt;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: 0.35mm solid #cbd5f5;
-    padding: 3mm 2mm;
+    letter-spacing: 0.12em;
+    border: 0.3mm solid #bfdbfe;
+    padding: 2.2mm 1.8mm;
     text-align: left;
   }
   tbody td {
-    border: 0.35mm solid #dbe4ff;
-    padding: 2.4mm 2mm;
+    border: 0.3mm solid #cbd5f5;
+    padding: 1.8mm 1.8mm;
     vertical-align: top;
-    font-size: 9.5pt;
+    font-size: 8.8pt;
+  }
+  tbody tr:nth-child(odd) {
+    background: rgba(226, 232, 240, 0.35);
   }
   td.id-col {
-    width: 16mm;
+    width: 15mm;
     font-weight: 700;
   }
   td.priority-col {
-    width: 24mm;
+    width: 23mm;
   }
   td.assigned-col {
-    width: 34mm;
+    width: 32mm;
   }
   .desc-col {
     width: auto;
@@ -316,14 +360,34 @@ ob_start();
 </style>
 </head>
 <body>
-  <div class="report-header">
-    <div class="info">
-      <div><span class="label">Building</span><?php echo htmlspecialchars($headerBuilding, ENT_QUOTES, 'UTF-8'); ?></div>
-      <div><span class="label">Room</span><?php echo htmlspecialchars($headerRoom, ENT_QUOTES, 'UTF-8'); ?></div>
+  <div class="report-shell">
+    <div class="report-header">
+      <div class="info">
+        <div class="primary-label"><?php echo htmlspecialchars($headerBuilding, ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="meta">
+          <span>Room: <?php echo htmlspecialchars($headerRoom, ENT_QUOTES, 'UTF-8'); ?></span>
+        </div>
+      </div>
+      <div class="summary">
+        <div class="task-count"><?php echo (int)$taskCount; ?> tasks</div>
+        <?php if (!empty($qrMap)): ?>
+          <?php
+            $firstQrTask = null;
+            foreach ($qrMap as $qrTaskId => $_qr) {
+                $firstQrTask = $qrTaskId;
+                break;
+            }
+          ?>
+          <?php if ($firstQrTask !== null && !empty($publicUrls[$firstQrTask])): ?>
+            <a class="top-qr" href="<?php echo htmlspecialchars($publicUrls[$firstQrTask], ENT_QUOTES, 'UTF-8'); ?>">
+              <span>Scan for latest photos</span>
+              <img src="<?php echo $qrMap[$firstQrTask]; ?>" alt="Task <?php echo (int)$firstQrTask; ?> quick access QR">
+            </a>
+          <?php endif; ?>
+        <?php endif; ?>
+      </div>
     </div>
-    <div class="counts">Total tasks: <?php echo (int)$taskCount; ?></div>
   </div>
-  <div class="meta-line">Generated: <?php echo htmlspecialchars($generatedAt, ENT_QUOTES, 'UTF-8'); ?></div>
 
 <?php if ($taskCount === 0): ?>
   <div class="no-tasks">No tasks found for this export.</div>
