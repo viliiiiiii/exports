@@ -152,10 +152,10 @@ ob_start();
 <meta charset="utf-8">
 <title>Building export - <?php echo htmlspecialchars($buildingName, ENT_QUOTES, 'UTF-8'); ?></title>
 <style>
-  @page { size: A4; margin: 16mm 14mm 18mm 14mm; }
+  @page { size: A4; margin: 10mm 12mm 12mm 12mm; }
   body {
     font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
-    font-size: 11px;
+    font-size: 12px;
     color: #0f172a;
     background: #f5f7ff;
     margin: 0;
@@ -184,7 +184,7 @@ ob_start();
     margin-top: 6px; font-size: 14px; color: #334155; letter-spacing: .22em;
     text-transform: uppercase;
   }
-  .cover__meta { margin-top: 18px; display:flex; flex-wrap:wrap; gap:14px 24px; font-size: 11px; color:#0f172a; }
+  .cover__meta { margin-top: 18px; display:flex; flex-wrap:wrap; gap:14px 24px; font-size: 12px; color:#0f172a; }
   .cover__meta span { font-weight:700; }
   .pill-row { margin-top: 22px; display:flex; flex-wrap:wrap; gap:10px; }
   .pill {
@@ -210,7 +210,7 @@ ob_start();
   }
   .room-title { font-size:20px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#0b1d4d; }
   .room-subtitle { margin-top:4px; color:#475569; }
-  .room-meta { display:flex; flex-wrap:wrap; gap:12px 18px; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#475569; }
+  .room-meta { display:flex; flex-wrap:wrap; gap:12px 18px; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:#475569; }
   .meta-value { font-weight:700; color:#0f172a; }
   .qr-wrapper {
     text-align:center; min-width:<?php echo (int)($qrSize + 40); ?>px;
@@ -221,7 +221,7 @@ ob_start();
     box-shadow:0 12px 24px rgba(15,23,42,.12);
   }
   .qr-halo img { display:block; width:<?php echo (int)$qrSize; ?>px; height:<?php echo (int)$qrSize; ?>px; }
-  .qr-caption { margin-top:8px; font-size:9px; color:#475569; letter-spacing:.1em; text-transform:uppercase; }
+  .qr-caption { margin-top:8px; font-size:10px; color:#475569; letter-spacing:.1em; text-transform:uppercase; }
 
   .stats-grid {
     margin-top:16px; display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
@@ -231,15 +231,15 @@ ob_start();
     background:#f8fbff;
   }
   .stat-card strong { display:block; font-size:14px; }
-  .stat-card span { display:block; margin-top:4px; font-size:10px; color:#64748b; text-transform:uppercase; letter-spacing:.12em; }
+  .stat-card span { display:block; margin-top:4px; font-size:11px; color:#64748b; text-transform:uppercase; letter-spacing:.12em; }
 
   .task-table { width:100%; border-collapse:collapse; margin-top:18px; }
   .task-table th {
-    background:#e2e8ff; color:#1e3a8a; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    background:#e2e8ff; color:#1e3a8a; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
     padding:8px; text-align:left; border-bottom:2px solid rgba(148,163,184,.35);
   }
   .task-table td {
-    padding:7px 8px; border-bottom:1px solid rgba(148,163,184,.25); vertical-align:top; font-size:10px;
+    padding:7px 8px; border-bottom:1px solid rgba(148,163,184,.25); vertical-align:top; font-size:11px;
   }
   .task-table tr:nth-child(even) { background:rgba(241,245,255,.6); }
   .priority-high { color:#b91c1c; }
@@ -317,7 +317,7 @@ ob_start();
               <img src="<?php echo htmlspecialchars($roomQrs[$rid], ENT_QUOTES, 'UTF-8'); ?>" alt="QR code for room">
             </div>
             <div class="qr-caption">Scan for live progress</div>
-            <?php if ($link): ?><div style="margin-top:4px;font-size:9px;color:#64748b;word-break:break-all;"><?php echo htmlspecialchars($link, ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
+            <?php if ($link): ?><div style="margin-top:4px;font-size:10px;color:#64748b;word-break:break-all;"><?php echo htmlspecialchars($link, ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
           <?php else: ?>
             <div class="qr-caption">QR not available for this section.</div>
           <?php endif; ?>
