@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . '/helpers.php';
-require_login();
-require_once __DIR__ . '/includes/export_tokens.php';
+declare(strict_types=1);
 
 set_time_limit(180);
 
